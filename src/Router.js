@@ -1,19 +1,17 @@
 class Router {
-  static #getCurrentPath() {
-    return window.location.pathname;
-  }
-  static #push(path) {
-    window.history.pushState(null, "", path);
-  }
-
-  constructor() {
+  constructor(windowObj = window) {
+    this.window = windowObj;
     this.routes = new Map();
 
     const handlePopState = () => {
-      const path = Router.#getCurrentPath();
+      const path = this.window.location.pathname;
       this.routes.has(path) && this.routes.get(path)();
     };
-    window.addEventListener("popstate", handlePopState);
+    const cleanupPopstate = () => {
+      this.window.removeEventListener("popstate", handlePopState);
+    };
+    this.window.addEventListener("popstate", handlePopState);
+    this.window.addEventListener("beforeunload", cleanupPopstate);
   }
 
   addRoute(path, handler) {
@@ -22,8 +20,10 @@ class Router {
 
   navigate(path) {
     if (this.routes.has(path)) {
-      Router.#push(path);
+      this.window.history.pushState(null, "", path);
       this.routes.get(path)();
+    } else {
+      console.warn(`找不到路由: ${path}`);
     }
   }
 }
