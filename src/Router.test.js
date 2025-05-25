@@ -24,11 +24,12 @@ describe("Router", () => {
     router = new Router(mockWindow);
   });
 
-  test("addRoute", () => {
+  test("#1-addRoute", () => {
     router.addRoute("/", () => {});
     expect(router.routes.size).toBe(1);
   });
-  test("navigate", () => {
+
+  test("#2-navigate", () => {
     const handler = jest.fn();
     router.addRoute("/test", handler);
     router.navigate("/test");
@@ -40,7 +41,7 @@ describe("Router", () => {
     expect(handler).toHaveBeenCalled();
   });
 
-  test("導航至不存在的路由時應該顯示警告", () => {
+  test("#3-導航至不存在的路由時應該顯示警告", () => {
     const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
 
     router.navigate("/不存在的路由");
