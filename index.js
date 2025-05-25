@@ -1,5 +1,17 @@
-import Router from "./src/Router.js";
+// @ts-nocheck
+const { JSDOM } = require("jsdom");
 
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
+  url: "http://localhost:3000/",
+  pretendToBeVisual: true,
+  resources: "usable",
+});
+
+global.document = dom.window.document;
+global.window = dom.window;
+global.history = dom.window.history;
+global.location = dom.window.location;
+const Router = require("./src/Router.js");
 const router = new Router();
 
 router.addRoute("/", () => {
@@ -13,5 +25,8 @@ router.addRoute("/about", () => {
   about.innerHTML = "About";
   document.body.appendChild(about);
 });
-console.log(1);
-window.location.replace("file:///Users/liuduofeng/Desktop/Router/about.html");
+
+router.navigate("/about");
+
+console.log("Current URL:", window.location.href);
+console.log("Page content:", document.body.innerHTML);
